@@ -216,6 +216,14 @@ ui <- shinyUI(
                
                br(),
                
+               tags$head(tags$style(HTML("table.dataTable.hover tbody tr:hover, table.dataTable.display tbody tr:hover {
+                                  background-color: #9c4242 !important;
+                                  }
+                                  "))),
+               tags$style(HTML(".dataTables_wrapper .dataTables_length, .dataTables_wrapper .dataTables_filter, .dataTables_wrapper .dataTables_info, .dataTables_wrapper .dataTables_processing,.dataTables_wrapper .dataTables_paginate .paginate_button, .dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
+            color: #EE72F1 !important;
+        }")),
+               
                # Plot Output 2 ####
                
                DT::dataTableOutput("table.1")
@@ -329,7 +337,18 @@ server <- shinyServer(function(input, output, session)
   })
   
   output$table.1 <- DT::renderDataTable({
-    cnt.table
+    
+    datatable(
+      cnt.table,
+      rownames = FALSE,
+      options = list(
+        initComplete = JS(
+          "function(settings, json) {",
+          "$(this.api().table().header()).css({'color': '#EE72F1'});",
+          "}"))
+    ) %>%
+      formatStyle(names(cnt.table),
+                  backgroundColor = "#8D8C93")
   })
     
   })
